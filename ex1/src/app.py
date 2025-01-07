@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from dimreduce import (
     load_data,
     group_and_aggregate_data,
@@ -39,7 +40,7 @@ if uploaded_file is not None:
     
     if analysis_type == 'Parties':
         # Transpose for party analysis
-        numeric_cols = filtered_df.select_dtypes(include=[pd.np.number]).columns
+        numeric_cols = filtered_df.select_dtypes(include=[np.number]).columns
         analysis_df = filtered_df[numeric_cols].T
         meta_columns = []
     else:

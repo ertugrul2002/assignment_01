@@ -1,7 +1,19 @@
 import numpy as np
 import pandas as pd
 
+def checkExt(filepath: str) -> int:
+    if ('.csv' in filepath):
+        return 0
+    if ('.xlsx' in filepath):
+        return 1
+    return 2
+
+
 def load_data(filepath: str) -> pd.DataFrame:
+    # print(">>>printing filepath: ",filepath)
+    # print("is csv ? :", ('.csv' in filepath))
+    # print("isXlsx ? : ", ('.xlsx' in filepath))
+    # print("isXls ? : ", ('.xlsx' not in filepath) and ('.csv' not in filepath))
     """
     Load data from a CSV or Excel file into a pandas DataFrame.
     
@@ -11,9 +23,9 @@ def load_data(filepath: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Loaded data
     """
-    if filepath.endswith('.csv'):
+    if (checkExt(filepath) == 0):
         return pd.read_csv(filepath)
-    elif filepath.endswith(('.xlsx', '.xls')):
+    elif ((checkExt(filepath) == 1) or (checkExt(filepath) == 2)):
         return pd.read_excel(filepath)
     else:
         raise ValueError("Unsupported file format. Please provide a CSV or Excel file.")
