@@ -1,16 +1,9 @@
 import numpy as np
 import pandas as pd
 
+#1st function (loading data)
 def load_data(filepath: str) -> pd.DataFrame:
-    """
-    Load data from a CSV or Excel file into a pandas DataFrame.
-    
-    Args:
-        filepath (str): Path to the data file
-        
-    Returns:
-        pd.DataFrame: Loaded data
-    """
+
     if filepath.endswith('.csv'):
         return pd.read_csv(filepath)
     elif filepath.endswith(('.xlsx', '.xls')):
@@ -18,32 +11,19 @@ def load_data(filepath: str) -> pd.DataFrame:
     else:
         raise ValueError("Unsupported file format. Please provide a CSV or Excel file.")
 
-def group_and_aggregate_data(df: pd.DataFrame, group_by_column: str, agg_func) -> pd.DataFrame:
-    """
-    Group and aggregate data by specified column using given aggregation function.
-    
-    Args:
-        df (pd.DataFrame): Input DataFrame
-        group_by_column (str): Column name to group by
-        agg_func: Aggregation function to apply
-        
-    Returns:
-        pd.DataFrame: Aggregated DataFrame
-    """
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    return df.groupby(group_by_column)[numeric_cols].agg(agg_func).reset_index()
+
+
+#2nd function (grouping,aggregating and deleting the 'ballot_code' column)
+
+def group_and_aggregate_data(df: pd.DataFrame, group_by_column: str, agg_func)-> pd.DataFrame:
+
+ return df.drop(columns='ballot_code').groupby(group_by_column).agg(agg_func)
+
+
+
 
 def remove_sparse_columns(df: pd.DataFrame, threshold: int) -> pd.DataFrame:
-    """
-    Remove columns where the sum of values is below the specified threshold.
-    
-    Args:
-        df (pd.DataFrame): Input DataFrame
-        threshold (int): Minimum sum threshold for keeping a column
-        
-    Returns:
-        pd.DataFrame: DataFrame with sparse columns removed
-    """
+
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     meta_cols = [col for col in df.columns if col not in numeric_cols]
     
@@ -52,18 +32,12 @@ def remove_sparse_columns(df: pd.DataFrame, threshold: int) -> pd.DataFrame:
     
     return df[meta_cols + list(cols_to_keep)]
 
+
+
+
+
 def dimensionality_reduction(df: pd.DataFrame, num_components: int, meta_columns: list[str]) -> pd.DataFrame:
-    """
-    Perform PCA dimensionality reduction on the data.
-    
-    Args:
-        df (pd.DataFrame): Input DataFrame
-        num_components (int): Number of principal components to retain
-        meta_columns (list[str]): Columns to exclude from PCA
-        
-    Returns:
-        pd.DataFrame: DataFrame with reduced dimensions plus metadata
-    """
+
     # Separate metadata and features
     meta_data = df[meta_columns]
     features = df.drop(columns=meta_columns)
