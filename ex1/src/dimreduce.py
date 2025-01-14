@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import plotly
+import plotly.express as px
 
 #1st function (loading data)
 def load_data(filepath: str) -> pd.DataFrame:
@@ -13,14 +15,15 @@ def load_data(filepath: str) -> pd.DataFrame:
 
 
 
-#2nd function (grouping,aggregating and deleting the 'ballot_code' column)
-
-def group_and_aggregate_data(df: pd.DataFrame, group_by_column: str, agg_func)-> pd.DataFrame:
-
- return df.drop(columns='ballot_code').groupby(group_by_column).agg(agg_func)
+#2nd function (grouping,aggregating deleting the 'ballot_code' column and and putting new indexes instead of 'city_name')
 
 
+def group_and_aggregate_data(df: pd.DataFrame, group_by_column: str, agg_func) -> pd.DataFrame:
+    return df.drop(columns='ballot_code').groupby(group_by_column).agg(agg_func).reset_index()
 
+
+
+ #3rd function: deleting numeric columns from the df whose the sum of value under the specified.
 
 def remove_sparse_columns(df: pd.DataFrame, threshold: int) -> pd.DataFrame:
 
@@ -34,35 +37,38 @@ def remove_sparse_columns(df: pd.DataFrame, threshold: int) -> pd.DataFrame:
 
 
 
-
+#4th function: dimensionality reduction with PCA
 
 def dimensionality_reduction(df: pd.DataFrame, num_components: int, meta_columns: list[str]) -> pd.DataFrame:
 
-    # Separate metadata and features
+    # separate metadata and features
     meta_data = df[meta_columns]
     features = df.drop(columns=meta_columns)
     
-    # Standardize the features
+    # standardize the features
     features_standardized = (features - features.mean()) / features.std()
     
-    # Calculate covariance matrix
+    # calculate covariance matrix
     covariance_matrix = np.cov(features_standardized.T)
     
-    # Calculate eigenvalues and eigenvectors
+    # calculate eigenvalues and eigenvectors
     eigenvalues, eigenvectors = np.linalg.eigh(covariance_matrix)
     
-    # Sort eigenvalues and eigenvectors in descending order
+    # sort eigenvalues and eigenvectors in descending order
     idx = eigenvalues.argsort()[::-1]
     eigenvalues = eigenvalues[idx]
     eigenvectors = eigenvectors[:, idx]
     
-    # Select top k eigenvectors
+    # select top k eigenvectors
     selected_vectors = eigenvectors[:, :num_components]
-    
-    # Project data onto new space
+
+    # project data in a new space
+
     transformed_data = np.dot(features_standardized, selected_vectors)
-    
-    # Create DataFrame with reduced dimensions
+
+
+    # create DataFrame with reduced dimensions
+
     reduced_df = pd.DataFrame(
         transformed_data,
         columns=[f'PC{i+1}' for i in range(num_components)],
@@ -72,27 +78,19 @@ def dimensionality_reduction(df: pd.DataFrame, num_components: int, meta_columns
     # Add back metadata columns
     return pd.concat([meta_data, reduced_df], axis=1)
 
+
+#interactive visualization using  plotly of the df after dimensional reduction:
+
 def create_visualization(df: pd.DataFrame, dimension_type: str, hover_data: list[str]) -> 'plotly.graph_objs.Figure':
-    """
-    Create an interactive scatter plot using Plotly.
-    
-    Args:
-        df (pd.DataFrame): DataFrame with reduced dimensions
-        dimension_type (str): 'cities' or 'parties'
-        hover_data (list[str]): Columns to show in hover tooltip
-        
-    Returns:
-        plotly.graph_objs.Figure: Interactive scatter plot
-    """
-    import plotly.express as px
-    
+
+
+   # visualizing using scattering the data
     fig = px.scatter(
         df,
-        x='PC1',
+        x='PC1' ,
         y='PC2',
-        hover_data=hover_data,
-        title=f'PCA Results - {dimension_type.capitalize()}',
-        labels={'PC1': 'First Principal Component', 'PC2': 'Second Principal Component'}
+        hover_data = hover_data,
+        title = f'PCA Results - { dimension_type.capitalize() }',
+        labels = { 'PC1' : 'First Principal Component' , 'PC2' : 'Second Principal Component' }
     )
-    
     return fig
