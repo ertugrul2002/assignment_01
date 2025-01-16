@@ -1,45 +1,64 @@
-# Dimensionality Reduction with PCA and Streamlit Interface
+# Objective
 
-## Overview
+We will gain hands-on experience with dimensionality reduction techniques by implementing our own functions and building a basic user interface using Streamlit. This will help us understand the fundamental concepts behind dimensionality reduction and practice developing a minimal UI to interact with the data.
+We will analyze the dataset of Knesset elections in Israel, where each row represents a ballot box. The columns include: city name, ballot box number, and the number of votes given to each party. Our task is to determine how different cities cluster based on voting patterns and how different parties tend to receive votes from similar or distinct areas. We will identify and interpret clustering patterns that emerge from your analysis.
 
-This project focuses on dimensionality reduction using Principal Component Analysis (PCA) and building a user-friendly interface with Streamlit. You will analyze Knesset election data to discover clustering patterns among cities and political parties based on voting patterns.
 
-## Objectives
-- Gain hands-on experience with dimensionality reduction techniques.
-- Implement PCA from scratch without using high-level libraries.
-- Create visualizations to interpret clustering patterns.
-- Build a Streamlit interface to interact with the data.
+# Election Data Analysis Tool
 
----
-
-## Features
-
-### Part 1: Data Processing and Analysis
-1. **Load Dataset**  
-   Load data from CSV/Excel into a pandas DataFrame.
-
-2. **Group and Aggregate Data**  
-   Group by specified columns and aggregate using custom functions.
-
-3. **Remove Sparse Columns**  
-   Filter out columns with values below a specified threshold.
-
-4. **Dimensionality Reduction**  
-   Implement PCA to reduce data dimensions while preserving metadata.
-
-5. **Visualize Data**  
-   Generate 2D and 3D scatter plots to explore clustering patterns using Plotly.
-
-### Part 2: Streamlit User Interface (Bonus)
-- Upload datasets.
-- Configure grouping and aggregation settings.
-- Set parameters for PCA and visualize results interactively.
-
----
+This project implements dimensionality reduction techniques for analyzing Israeli Knesset election data, including a Streamlit-based user interface for interactive exploration.
 
 ## Installation
 
-1. Clone this repository:
-   ```bash
-   git clone <repository_url>
-   cd <repository_directory>
+1. Clone this repository
+2. Install required packages:
+```bash
+pip install numpy pandas plotly streamlit
+```
+
+## Project Structure
+
+- `dimreduce.py`: Core implementation of data processing and analysis functions
+- `app.py`: Streamlit web application
+- `demo.ipynb`: Jupyter notebook demonstrating usage
+- `README.md`: This file
+
+## Usage
+
+### Running the Streamlit App
+
+1. Navigate to the project directory
+2. Run:
+```bash
+streamlit run app.py
+```
+3. Open your web browser to the URL shown in the terminal
+
+### Using the Python Module
+
+```python
+from dimreduce import load_data, group_and_aggregate_data, dimensionality_reduction
+
+# Load your data
+df = load_data('your_data.csv')
+
+# Process the data
+grouped_df = group_and_aggregate_data(df, 'city_name', 'sum')
+reduced_df = dimensionality_reduction(grouped_df, 2, ['city_name'])
+```
+
+## Features
+
+- Data loading from CSV and Excel files
+- Flexible data grouping and aggregation
+- Sparse column removal
+- Custom PCA implementation
+- Interactive visualizations using Plotly
+- User-friendly Streamlit interface
+
+## Implementation Details
+
+- PCA is implemented from scratch using NumPy
+- Visualizations use Plotly for interactivity
+- Streamlit interface provides easy data exploration
+- All functions include comprehensive docstrings
